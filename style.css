@@ -1,0 +1,12 @@
+table {
+  background-color: rgb(255, 255, 255);
+}
+td {
+  border: 1px solid rgb(0, 0, 0);
+  width: 10px;
+  height: 10px;
+}
+
+.alive {
+  background-color: darkblue;
+}
