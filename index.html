@@ -8,22 +8,42 @@
     <title>Oli's Game of Life</title>
   </head>
   <body>
-    <section id="universe"></section>
-    <div>
-      <input
-        type="range"
-        id="dimensions"
-        name="dimensions"
-        min="10"
-        max="100"
-        step="10"
-        value="20"
-      />
+    <main>
+      <h1>Oli's Game of Life</h1>
 
-      <label for="dimensions">Universe size</label>
-    </div>
-    <button class="create-btn">Create universe</button>
-    <button class="next-btn">Next phase</button>
+      <section class="btn-container">
+        <button class="create-btn pulse">Create universe</button>
+        <button class="next-btn pulse hidden">Next phase</button>
+        <button class="restart pulse hidden">Restart</button>
+      </section>
+      <ol>
+        <li>Select universe size</li>
+        <li>Create universe</li>
+        <li>Hover mouse or tap screen to select 'seeds'</li>
+        <li>Click next phase to view next stage of world</li>
+        <li>
+          Continue clicking until game is over (lest you discover an infinite
+          moving lifeform)
+        </li>
+      </ol>
+
+      <section id="universe"></section>
+      <div class="dimension-container">
+        <label for="dimensions">small universe</label>
+        <input
+          type="range"
+          id="dimensions"
+          name="dimensions"
+          min="10"
+          max="80"
+          step="10"
+          value="20"
+        />
+
+        <label for="dimensions">large universe size</label>
+      </div>
+    </main>
+    <audio class="clickSound" src="/Media/clickSound.mp3"></audio>
     <script src="app.js"></script>
   </body>
 </html>

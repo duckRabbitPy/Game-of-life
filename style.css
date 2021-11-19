@@ -1,5 +1,33 @@
+body {
+  background-color: rgb(37, 37, 53);
+  font-family: monospace;
+  font-size: x-large;
+  color: antiquewhite;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
+}
+
+button {
+  margin: 1rem;
+  font-size: xx-large;
+  border: rgb(0, 0, 0, 0) 3px solid;
+}
+
+button:hover {
+  border: rgb(0, 0, 0) 3px solid;
+  background-color: aquamarine;
+}
+
 table {
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(138, 143, 190);
+  margin-top: 2rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 td {
   border: 1px solid rgb(0, 0, 0);
@@ -7,6 +35,32 @@ td {
   height: 10px;
 }
 
+li {
+  padding: 0.5rem;
+}
+
 .alive {
   background-color: darkblue;
+}
+
+.hidden {
+  display: none;
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.9);
+  }
+
+  70% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(0.9);
+  }
 }

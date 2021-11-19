@@ -115,10 +115,10 @@ function clickedStateUpdate() {
 function renderNextState(currWorldState) {
   const nextWorldState = nextWorldyState(currWorldState);
 
-  console.log(currWorldState, "dd", nextWorldState);
   if (noChange(currWorldState, nextWorldState)) {
-    nextBtn.disabled = true;
-    alert("game over, restart to play again");
+    nextBtn.classList.add("hidden");
+    restartBtn.classList.remove("hidden");
+    alert("Game over! Marvel at your life forms and restart to play again");
     return;
   }
 
@@ -138,15 +138,28 @@ function renderNextState(currWorldState) {
   globalState = nextWorldState;
 }
 
-let createBtn = document.querySelector(".create-btn");
-let nextBtn = document.querySelector(".next-btn");
-let dimensions = document.querySelector("#dimensions");
-let clickableCells = document.querySelectorAll("#table td");
+const allBtns = document.querySelectorAll("button");
+const createBtn = document.querySelector(".create-btn");
+const nextBtn = document.querySelector(".next-btn");
+const restartBtn = document.querySelector(".restart");
+const dimensions = document.querySelector("#dimensions");
+const dimensionContainer = document.querySelector(".dimension-container");
+const clickableCells = document.querySelectorAll("#table td");
+const clickSound = document.querySelector(".clickSound");
+
+allBtns.forEach((button) => {
+  button.addEventListener("click", () => {
+    clickSound.currentTime = 0;
+    clickSound.play();
+  });
+});
 
 createBtn.addEventListener("click", () => {
   createUniverse(dimensions.value, dimensions.value);
   // no state at this point
-  createBtn.disabled = "true";
+  createBtn.classList.add("hidden");
+  dimensionContainer.classList.add("hidden");
+  nextBtn.classList.remove("hidden");
 });
 
 nextBtn.addEventListener("click", () => {
@@ -161,7 +174,11 @@ nextBtn.addEventListener("click", () => {
   }
 });
 
-var noChange = function (arr1, arr2) {
+restartBtn.addEventListener("click", () => {
+  window.location.reload();
+});
+
+let noChange = function (arr1, arr2) {
   if (arr1.length !== arr2.length) return false;
 
   for (let i = 0; i < arr1.length; i++) {
