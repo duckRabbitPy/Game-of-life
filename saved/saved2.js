@@ -10,8 +10,6 @@
 
 let universe = document.getElementById("universe");
 let table = document.createElement("table");
-let globalState = [];
-let init = false;
 
 function nextWorldyState(currWorldState) {
   let nextWorldState = [];
@@ -58,9 +56,9 @@ function aliveInNext(neighbours, currWorldState, currLiving) {
   });
 
   if (currLiving) {
-    return count === 2 || count === 3 ? true : false;
+    return count >= 2 ? true : false;
   } else if (!currLiving) {
-    return count === 3 ? true : false;
+    return count >= 3 ? true : false;
   }
 }
 
@@ -78,13 +76,6 @@ function createUniverse(numRows, numColumns) {
       datacell.addEventListener("click", (event) => {
         event.target.classList.add("alive");
         event.target.dataset.living = "true";
-      });
-
-      datacell.addEventListener("mouseover", (event) => {
-        if (globalState.length === 0) {
-          event.target.classList.add("alive");
-          event.target.dataset.living = "true";
-        }
       });
 
       tableRow.appendChild(datacell);
@@ -114,14 +105,7 @@ function clickedStateUpdate() {
 
 function renderNextState(currWorldState) {
   const nextWorldState = nextWorldyState(currWorldState);
-
-  console.log(currWorldState, "dd", nextWorldState);
-  if (noChange(currWorldState, nextWorldState)) {
-    nextBtn.disabled = true;
-    alert("game over, restart to play again");
-    return;
-  }
-
+  console.log({ nextWorldState });
   for (let row of table.rows) {
     for (let cell of row.cells) {
       cell.classList.remove("alive");
@@ -135,10 +119,12 @@ function renderNextState(currWorldState) {
       }
     }
   }
-  globalState = nextWorldState;
+  console.log({ nextWorldState });
+  return nextWorldState;
 }
 
 let createBtn = document.querySelector(".create-btn");
+let startBtn = document.querySelector(".start-btn");
 let nextBtn = document.querySelector(".next-btn");
 let dimensions = document.querySelector("#dimensions");
 let clickableCells = document.querySelectorAll("#table td");
@@ -146,30 +132,18 @@ let clickableCells = document.querySelectorAll("#table td");
 createBtn.addEventListener("click", () => {
   createUniverse(dimensions.value, dimensions.value);
   // no state at this point
-  createBtn.disabled = "true";
+});
+
+let globalState = [];
+
+startBtn.addEventListener("click", () => {
+  //run clickedState update and get currentstate for first time
+  let currWorldState = clickedStateUpdate();
+  globalState = renderNextState(currWorldState);
 });
 
 nextBtn.addEventListener("click", () => {
-  //run clickedState update and get currentstate for first time
-  if (!init) {
-    let currWorldState = clickedStateUpdate();
-    renderNextState(currWorldState);
-    init = true;
-  } else {
-    let currWorldState = globalState;
-    renderNextState(currWorldState);
-  }
+  renderNextState(globalState);
+
+  console.log(globalState);
 });
-
-var noChange = function (arr1, arr2) {
-  if (arr1.length !== arr2.length) return false;
-
-  for (let i = 0; i < arr1.length; i++) {
-    let nestedArr1 = arr1[i];
-    let nestedArr2 = arr2[i];
-    for (let y = 0; y < nestedArr1; y++) {
-      if (nestedArr1[y] !== nestedArr2[y]) return false;
-    }
-  }
-  return true;
-};
