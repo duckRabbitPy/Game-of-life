@@ -33,47 +33,28 @@ function nextWorldyState(currWorldState) {
       [currCellX - 1, currCellY],
     ];
 
-    if (aliveInNext(neighbours, currWorldState, currLiving)) {
+    let count = 0;
+
+    neighbours.forEach((neighbour) => {
+      currWorldState.forEach((cell) => {
+        //if x and y co-ordinates of currWorldState and neighbours match, the neighbour is alive
+        //currWorldState only holds living data
+        if (cell[0] === neighbour[0] && cell[1] === neighbour[1]) {
+          if (cell[2]) {
+            count++;
+          }
+        }
+      });
+    });
+
+    //TODO revive dead cells if three living neighbours
+    if (count === 2 || count === 3) {
       currLiving = true;
       nextWorldState.push([currCellX, currCellY, currLiving]);
     }
   }
   //as world is potentially infinite, only return state of alive cells
   return nextWorldState;
-}
-
-///checks all neighbours and count living
-//check for match between neighbour co-ordinates and world array and extract living value
-//count living neighbours and determine if survive, revive or die
-function aliveInNext(neighbours, currWorldState, currLiving) {
-  let countForLiving = 0;
-  neighbours.forEach((neighbour) => {
-    let countForDead = 0;
-    currWorldState.forEach((cell) => {
-      //if x and y co-ordinates of currWorldState and neighbours match, you have found the neighbour cell in the current state
-      //check and see if that neighbour is alive
-      if (cell[0] === neighbour[0] && cell[1] === neighbour[1]) {
-        if (cell[2]) {
-          countForLiving++;
-        }
-      } else {
-        // console.log("not alive", neighbour[0], neighbour[1]);
-        if (
-          (cell[0] === neighbour[0] + 1 || cell[0] === neighbour[0] - 1) &&
-          (cell[1] === neighbour[1] + 1 || cell[1] === neighbour[1] - 1)
-        ) {
-          countForDead++;
-        }
-      }
-    });
-    if (countForDead > 2) {
-      console.log("revive me", neighbour);
-    }
-  });
-
-  if (currLiving) {
-    return countForLiving === 2 || countForLiving === 3 ? true : false;
-  }
 }
 
 function createUniverse(numRows, numColumns) {
