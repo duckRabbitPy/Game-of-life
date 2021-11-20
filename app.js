@@ -1,3 +1,14 @@
+// Rules
+// Any live cell with two or three live neighbours survives.
+// Any dead cell with three live neighbours becomes a live cell.
+// All other live cells die in the next generation. Similarly, all other dead cells stay dead.
+
+// Write a function that can show next state of world when called
+
+// 2D co-ordinate Grid, live or dead at x,y co-ordinate.
+
+// [ [x,y,living], [x,y,living] ...]
+
 const allBtns = document.querySelectorAll("button");
 const createBtn = document.querySelector(".create-btn");
 const nextBtn = document.querySelector(".next-btn");
@@ -9,16 +20,6 @@ const generations = document.querySelector(".generations");
 const gen = document.querySelector("#gen");
 const clickableCells = document.querySelectorAll("#table td");
 const clickSound = document.querySelector(".clickSound");
-
-// Any live cell with two or three live neighbours survives.
-// Any dead cell with three live neighbours becomes a live cell.
-// All other live cells die in the next generation. Similarly, all other dead cells stay dead.
-
-//write a function that can show next state of world when called
-
-//2D co-ordinate Grid, live or dead at x,y co-ordinate.
-
-// [ [x,y,living], [x,y,living] ...]
 
 let universe = document.getElementById("universe");
 let table = document.createElement("table");
@@ -50,8 +51,9 @@ function nextWorldyState(currWorldState) {
     let count = 0;
 
     neighbours.forEach((neighbour) => {
+      //now the co-ordinates of neighbouring cells are known, retrieve the actual living state from state array
       currWorldState.forEach((cell) => {
-        //if x and y co-ordinates of currWorldState current cell and neighbours match,
+        //if x and y co-ordinates of currWorldState and neighbour co-ordinates match, retrieve living state of neighbour cell in question
         if (cell[0] === neighbour[0] && cell[1] === neighbour[1]) {
           if (cell[2]) {
             count++;
@@ -60,12 +62,14 @@ function nextWorldyState(currWorldState) {
       });
     });
 
-    //TODO revive dead cells if three living neighbours
-    if (count === 2 || (count === 3 && currLiving)) {
+    if ((count === 2 || count === 3) && currLiving) {
       currLiving = true;
       nextWorldState.push([currCellX, currCellY, currLiving]);
     } else if (count === 3 && !currLiving) {
       currLiving = true;
+      nextWorldState.push([currCellX, currCellY, currLiving]);
+    } else {
+      currLiving = false;
       nextWorldState.push([currCellX, currCellY, currLiving]);
     }
   }
@@ -128,22 +132,14 @@ function clickedStateUpdate() {
 function renderNextState(currWorldState) {
   const nextWorldState = nextWorldyState(currWorldState);
 
-  if (noChange(currWorldState, nextWorldState)) {
-    nextBtn.classList.add("hidden");
-    restartBtn.classList.remove("hidden");
-
-    gen.classList.add("hidden");
-    generations.innerHTML = "finished!";
-    return;
-  }
-
   for (let row of table.rows) {
     for (let cell of row.cells) {
       cell.classList.remove("alive");
-      for (let aliveCell of nextWorldState) {
+      for (let cellState of nextWorldState) {
         if (
-          aliveCell[0] === Number(cell.dataset.xValue) &&
-          aliveCell[1] === Number(cell.dataset.yValue)
+          cellState[0] === Number(cell.dataset.xValue) &&
+          cellState[1] === Number(cell.dataset.yValue) &&
+          cellState[2] === true
         ) {
           cell.classList.add("alive");
         }
@@ -151,6 +147,7 @@ function renderNextState(currWorldState) {
     }
   }
   globalState = nextWorldState;
+  console.log(globalState);
 }
 
 let noChange = function (arr1, arr2) {
@@ -187,7 +184,7 @@ restartBtn.addEventListener("click", () => {
 
 nextBtn.addEventListener("click", () => {
   //run clickedState update and get currentstate for first time
-  setInterval(timeTick, 1500);
+  setInterval(timeTick, 200);
   instructions.classList.add("hidden");
   nextBtn.classList.add("hidden");
 });
