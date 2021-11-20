@@ -16,7 +16,6 @@ let init = false;
 function nextWorldyState(currWorldState) {
   let nextWorldState = [];
   //loop through 2D array, to apply rules to each cell
-  //current world state should have all co-ordinates
 
   for (let i = 0; i < currWorldState.length; i++) {
     let currCellX = currWorldState[i][0];
@@ -38,7 +37,8 @@ function nextWorldyState(currWorldState) {
 
     neighbours.forEach((neighbour) => {
       currWorldState.forEach((cell) => {
-        //if x and y co-ordinates of currWorldState current cell and neighbours match,
+        //if x and y co-ordinates of currWorldState and neighbours match, the neighbour is alive
+        //currWorldState only holds living data
         if (cell[0] === neighbour[0] && cell[1] === neighbour[1]) {
           if (cell[2]) {
             count++;
@@ -48,15 +48,12 @@ function nextWorldyState(currWorldState) {
     });
 
     //TODO revive dead cells if three living neighbours
-    if (count === 2 || (count === 3 && currLiving)) {
-      currLiving = true;
-      nextWorldState.push([currCellX, currCellY, currLiving]);
-    } else if (count === 3 && !currLiving) {
+    if (count === 2 || count === 3) {
       currLiving = true;
       nextWorldState.push([currCellX, currCellY, currLiving]);
     }
   }
-
+  //as world is potentially infinite, only return state of alive cells
   return nextWorldState;
 }
 
@@ -102,8 +99,6 @@ function clickedStateUpdate() {
       let y = parseInt(cell.dataset.yValue);
       if (cell.dataset.living === "true") {
         currWorldState.push([x, y, true]);
-      } else {
-        currWorldState.push([x, y, false]);
       }
     }
   }
