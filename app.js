@@ -11,6 +11,7 @@
 let universe = document.getElementById("universe");
 let table = document.createElement("table");
 let globalState = [];
+let globalGen = 0;
 let init = false;
 
 function nextWorldyState(currWorldState) {
@@ -118,7 +119,6 @@ function renderNextState(currWorldState) {
   if (noChange(currWorldState, nextWorldState)) {
     nextBtn.classList.add("hidden");
     restartBtn.classList.remove("hidden");
-    alert("Game over! Marvel at your life forms and restart to play again");
     return;
   }
 
@@ -157,6 +157,9 @@ const nextBtn = document.querySelector(".next-btn");
 const restartBtn = document.querySelector(".restart");
 const dimensions = document.querySelector("#dimensions");
 const dimensionContainer = document.querySelector(".dimension-container");
+const instructions = document.querySelector(".instructions");
+const generations = document.querySelector(".generations");
+const gen = document.querySelector("#gen");
 const clickableCells = document.querySelectorAll("#table td");
 const clickSound = document.querySelector(".clickSound");
 
@@ -175,8 +178,18 @@ createBtn.addEventListener("click", () => {
   nextBtn.classList.remove("hidden");
 });
 
+restartBtn.addEventListener("click", () => {
+  window.location.reload();
+});
+
 nextBtn.addEventListener("click", () => {
   //run clickedState update and get currentstate for first time
+  setInterval(timeTick, 1500);
+  instructions.classList.add("hidden");
+  nextBtn.classList.add("hidden");
+});
+
+function timeTick() {
   if (!init) {
     let currWorldState = clickedStateUpdate();
     renderNextState(currWorldState);
@@ -185,8 +198,7 @@ nextBtn.addEventListener("click", () => {
     let currWorldState = globalState;
     renderNextState(currWorldState);
   }
-});
-
-restartBtn.addEventListener("click", () => {
-  window.location.reload();
-});
+  globalGen++;
+  gen.innerHTML = globalGen;
+  generations.classList.remove("hidden");
+}

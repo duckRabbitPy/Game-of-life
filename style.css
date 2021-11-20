@@ -1,7 +1,7 @@
 body {
   background-color: rgb(37, 37, 53);
   font-family: monospace;
-  font-size: x-large;
+  font-size: large;
   color: antiquewhite;
 }
 
@@ -36,7 +36,7 @@ td {
 }
 
 li {
-  padding: 0.5rem;
+  padding: 0.2rem;
 }
 
 .alive {
