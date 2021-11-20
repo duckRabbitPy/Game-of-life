@@ -46,21 +46,33 @@ function nextWorldyState(currWorldState) {
 //check for match between neighbour co-ordinates and world array and extract living value
 //count living neighbours and determine if survive, revive or die
 function aliveInNext(neighbours, currWorldState, currLiving) {
-  let count = 0;
+  let countForLiving = 0;
   neighbours.forEach((neighbour) => {
+    let countForDead = 0;
     currWorldState.forEach((cell) => {
+      //if x and y co-ordinates of currWorldState and neighbours match, you have found the neighbour cell in the current state
+      //check and see if that neighbour is alive
       if (cell[0] === neighbour[0] && cell[1] === neighbour[1]) {
         if (cell[2]) {
-          count++;
+          countForLiving++;
+        }
+      } else {
+        // console.log("not alive", neighbour[0], neighbour[1]);
+        if (
+          (cell[0] === neighbour[0] + 1 || cell[0] === neighbour[0] - 1) &&
+          (cell[1] === neighbour[1] + 1 || cell[1] === neighbour[1] - 1)
+        ) {
+          countForDead++;
         }
       }
     });
+    if (countForDead > 2) {
+      console.log("revive me", neighbour);
+    }
   });
 
   if (currLiving) {
-    return count === 2 || count === 3 ? true : false;
-  } else if (!currLiving) {
-    return count === 3 ? true : false;
+    return countForLiving === 2 || countForLiving === 3 ? true : false;
   }
 }
 
@@ -76,12 +88,14 @@ function createUniverse(numRows, numColumns) {
       datacell.dataset.living = "false";
 
       datacell.addEventListener("click", (event) => {
-        event.target.classList.add("alive");
-        event.target.dataset.living = "true";
+        if (globalState.length === 0) {
+          event.target.classList.add("alive");
+          event.target.dataset.living = "true";
+        }
       });
 
       datacell.addEventListener("mouseover", (event) => {
-        if (globalState.length === 0) {
+        if (globalState.length === 0 && event.ctrlKey) {
           event.target.classList.add("alive");
           event.target.dataset.living = "true";
         }
@@ -138,6 +152,19 @@ function renderNextState(currWorldState) {
   globalState = nextWorldState;
 }
 
+let noChange = function (arr1, arr2) {
+  if (arr1.length !== arr2.length) return false;
+
+  for (let i = 0; i < arr1.length; i++) {
+    let nestedArr1 = arr1[i];
+    let nestedArr2 = arr2[i];
+    for (let y = 0; y < nestedArr1; y++) {
+      if (nestedArr1[y] !== nestedArr2[y]) return false;
+    }
+  }
+  return true;
+};
+
 const allBtns = document.querySelectorAll("button");
 const createBtn = document.querySelector(".create-btn");
 const nextBtn = document.querySelector(".next-btn");
@@ -177,16 +204,3 @@ nextBtn.addEventListener("click", () => {
 restartBtn.addEventListener("click", () => {
   window.location.reload();
 });
-
-let noChange = function (arr1, arr2) {
-  if (arr1.length !== arr2.length) return false;
-
-  for (let i = 0; i < arr1.length; i++) {
-    let nestedArr1 = arr1[i];
-    let nestedArr2 = arr2[i];
-    for (let y = 0; y < nestedArr1; y++) {
-      if (nestedArr1[y] !== nestedArr2[y]) return false;
-    }
-  }
-  return true;
-};
