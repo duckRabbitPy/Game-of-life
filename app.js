@@ -1,3 +1,15 @@
+const allBtns = document.querySelectorAll("button");
+const createBtn = document.querySelector(".create-btn");
+const nextBtn = document.querySelector(".next-btn");
+const restartBtn = document.querySelector(".restart");
+const dimensions = document.querySelector("#dimensions");
+const dimensionContainer = document.querySelector(".dimension-container");
+const instructions = document.querySelector(".instructions");
+const generations = document.querySelector(".generations");
+const gen = document.querySelector("#gen");
+const clickableCells = document.querySelectorAll("#table td");
+const clickSound = document.querySelector(".clickSound");
+
 // Any live cell with two or three live neighbours survives.
 // Any dead cell with three live neighbours becomes a live cell.
 // All other live cells die in the next generation. Similarly, all other dead cells stay dead.
@@ -119,6 +131,9 @@ function renderNextState(currWorldState) {
   if (noChange(currWorldState, nextWorldState)) {
     nextBtn.classList.add("hidden");
     restartBtn.classList.remove("hidden");
+
+    gen.classList.add("hidden");
+    generations.innerHTML = "finished!";
     return;
   }
 
@@ -150,18 +165,6 @@ let noChange = function (arr1, arr2) {
   }
   return true;
 };
-
-const allBtns = document.querySelectorAll("button");
-const createBtn = document.querySelector(".create-btn");
-const nextBtn = document.querySelector(".next-btn");
-const restartBtn = document.querySelector(".restart");
-const dimensions = document.querySelector("#dimensions");
-const dimensionContainer = document.querySelector(".dimension-container");
-const instructions = document.querySelector(".instructions");
-const generations = document.querySelector(".generations");
-const gen = document.querySelector("#gen");
-const clickableCells = document.querySelectorAll("#table td");
-const clickSound = document.querySelector(".clickSound");
 
 allBtns.forEach((button) => {
   button.addEventListener("click", () => {
