@@ -9,7 +9,6 @@
 
 // [ [x,y,living], [x,y,living] ...]
 
-const allBtns = document.querySelectorAll("button");
 const createBtn = document.querySelector(".create-btn");
 const nextBtn = document.querySelector(".next-btn");
 const restartBtn = document.querySelector(".restart");
@@ -18,65 +17,16 @@ const dimensionContainer = document.querySelector(".dimension-container");
 const instructions = document.querySelector(".instructions");
 const generations = document.querySelector(".generations");
 const gen = document.querySelector("#gen");
-const clickableCells = document.querySelectorAll("#table td");
-const clickSound = document.querySelector(".clickSound");
 
+//For convienience I used global state to store state between generations
 let universe = document.getElementById("universe");
 let table = document.createElement("table");
 let globalState = [];
 let globalGen = 0;
 let init = false;
 
-function nextWorldyState(currWorldState) {
-  let nextWorldState = [];
-  //loop through 2D array, to apply rules to each cell
-  //current world state should have all co-ordinates
-
-  for (let i = 0; i < currWorldState.length; i++) {
-    let currCellX = currWorldState[i][0];
-    let currCellY = currWorldState[i][1];
-    let currLiving = currWorldState[i][2];
-
-    let neighbours = [
-      [currCellX - 1, currCellY + 1],
-      [currCellX, currCellY + 1],
-      [currCellX + 1, currCellY + 1],
-      [currCellX + 1, currCellY],
-      [currCellX + 1, currCellY - 1],
-      [currCellX, currCellY - 1],
-      [currCellX - 1, currCellY - 1],
-      [currCellX - 1, currCellY],
-    ];
-
-    let count = 0;
-
-    neighbours.forEach((neighbour) => {
-      //now the co-ordinates of neighbouring cells are known, retrieve the actual living state from state array
-      currWorldState.forEach((cell) => {
-        //if x and y co-ordinates of currWorldState and neighbour co-ordinates match, retrieve living state of neighbour cell in question
-        if (cell[0] === neighbour[0] && cell[1] === neighbour[1]) {
-          if (cell[2]) {
-            count++;
-          }
-        }
-      });
-    });
-
-    if ((count === 2 || count === 3) && currLiving) {
-      currLiving = true;
-      nextWorldState.push([currCellX, currCellY, currLiving]);
-    } else if (count === 3 && !currLiving) {
-      currLiving = true;
-      nextWorldState.push([currCellX, currCellY, currLiving]);
-    } else {
-      currLiving = false;
-      nextWorldState.push([currCellX, currCellY, currLiving]);
-    }
-  }
-
-  return nextWorldState;
-}
-
+//create table and add event listeners to allow selection
+//store alive state from clicking on the element themselves as a data attribute
 function createUniverse(numRows, numColumns) {
   table.setAttribute("id", "table");
 
@@ -109,8 +59,66 @@ function createUniverse(numRows, numColumns) {
   universe.appendChild(table);
 }
 
+//accepts currentWorld as an array, returns next state of world
+function nextWorldyState(currWorldState) {
+  let nextWorldState = [];
+  //loop through 2D array, to apply rules to each cell
+  //current world state has co-ordinates of every cell
+
+  for (let i = 0; i < currWorldState.length; i++) {
+    let currCellX = currWorldState[i][0];
+    let currCellY = currWorldState[i][1];
+    let currLiving = currWorldState[i][2];
+
+    //co-ordinates of neighbouring 8 cells
+    let neighbours = [
+      [currCellX - 1, currCellY + 1],
+      [currCellX, currCellY + 1],
+      [currCellX + 1, currCellY + 1],
+      [currCellX + 1, currCellY],
+      [currCellX + 1, currCellY - 1],
+      [currCellX, currCellY - 1],
+      [currCellX - 1, currCellY - 1],
+      [currCellX - 1, currCellY],
+    ];
+
+    let count = 0;
+
+    neighbours.forEach((neighbour) => {
+      //now the co-ordinates of neighbouring cells are known, retrieve the actual living state from currWorldState array
+      currWorldState.forEach((cell) => {
+        //if x and y co-ordinates of currWorldState and neighbour co-ordinates match, retrieve living state of neighbour cell in question
+        if (cell[0] === neighbour[0] && cell[1] === neighbour[1]) {
+          if (cell[2]) {
+            //if neighbour is alive increment count
+            count++;
+          }
+        }
+      });
+    });
+
+    if ((count === 2 || count === 3) && currLiving) {
+      //survives
+      currLiving = true;
+      nextWorldState.push([currCellX, currCellY, currLiving]);
+    } else if (count === 3 && !currLiving) {
+      //revived
+      currLiving = true;
+      nextWorldState.push([currCellX, currCellY, currLiving]);
+    } else {
+      //dead
+      currLiving = false;
+      nextWorldState.push([currCellX, currCellY, currLiving]);
+    }
+  }
+
+  //return next state of world for rendering
+  return nextWorldState;
+}
+
 function clickedStateUpdate() {
   // first introduction of state
+  // collect starting state from data attributes
   let currWorldState = [];
 
   for (let row of table.rows) {
@@ -129,6 +137,7 @@ function clickedStateUpdate() {
   return currWorldState;
 }
 
+//update classes based on next state
 function renderNextState(currWorldState) {
   const nextWorldState = nextWorldyState(currWorldState);
 
@@ -146,29 +155,10 @@ function renderNextState(currWorldState) {
       }
     }
   }
+  //update globalState for next setInterval call
   globalState = nextWorldState;
   console.log(globalState);
 }
-
-let noChange = function (arr1, arr2) {
-  if (arr1.length !== arr2.length) return false;
-
-  for (let i = 0; i < arr1.length; i++) {
-    let nestedArr1 = arr1[i];
-    let nestedArr2 = arr2[i];
-    for (let y = 0; y < nestedArr1; y++) {
-      if (nestedArr1[y] !== nestedArr2[y]) return false;
-    }
-  }
-  return true;
-};
-
-allBtns.forEach((button) => {
-  button.addEventListener("click", () => {
-    clickSound.currentTime = 0;
-    clickSound.play();
-  });
-});
 
 createBtn.addEventListener("click", () => {
   createUniverse(dimensions.value, dimensions.value);
@@ -184,11 +174,13 @@ restartBtn.addEventListener("click", () => {
 
 nextBtn.addEventListener("click", () => {
   //run clickedState update and get currentstate for first time
-  setInterval(timeTick, 200);
+  setInterval(timeTick, 400);
   instructions.classList.add("hidden");
   nextBtn.classList.add("hidden");
+  restartBtn.classList.remove("hidden");
 });
 
+//calls renderNextState periodically
 function timeTick() {
   if (!init) {
     let currWorldState = clickedStateUpdate();
