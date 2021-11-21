@@ -24,10 +24,11 @@ button:hover {
 }
 
 table {
-  background-color: rgb(138, 143, 190);
+  background-color: #dfe0e4;
   margin-top: 2rem;
   margin-left: auto;
   margin-right: auto;
+  border: solid black 5px;
 }
 td {
   border: 1px solid rgb(0, 0, 0);
@@ -40,7 +41,8 @@ li {
 }
 
 .alive {
-  background-color: darkblue;
+  background-color: #1f7035;
+  animation: random 4s infinite;
 }
 
 .hidden {
@@ -62,5 +64,23 @@ li {
 
   100% {
     transform: scale(0.9);
+  }
+}
+
+@keyframes random {
+  15% {
+    background-color: #144621;
+  }
+  30% {
+    background-color: #1a5e2c;
+  }
+  45% {
+    background-color: #289144;
+  }
+  60% {
+    background-color: #2eaa4f;
+  }
+  75% {
+    background-color: #36c75d;
   }
 }
