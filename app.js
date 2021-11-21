@@ -9,6 +9,14 @@
 
 // [ [x,y,living], [x,y,living] ...]
 
+function getUserG(username) {
+  return fetch(`https://api.github.com/users/${username}`)
+    .then((response) => response.json())
+    .then(console.log);
+}
+
+getUserG("duckRabbitPy/received_events");
+
 const createBtn = document.querySelector(".create-btn");
 const nextBtn = document.querySelector(".next-btn");
 const restartBtn = document.querySelector(".restart");
